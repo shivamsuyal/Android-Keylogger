@@ -1,0 +1,93 @@
+import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.AccessibilityServiceInfo;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.*;
+import java.io.*;
+
+public class MyAccessibilityService extends AccessibilityService {
+
+		static final String TAG = "RecorderService";
+	
+		private String getEventType(AccessibilityEvent event) {
+				switch (event.getEventType()) {
+						case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
+							return "TYPE_NOTIFICATION_STATE_CHANGED";
+						case AccessibilityEvent.TYPE_VIEW_CLICKED:
+							//Toast.makeText(this,"clicked",Toast.LENGTH_LONG);
+							return "TYPE_VIEW_CLICKED";
+						case AccessibilityEvent.TYPE_VIEW_FOCUSED:
+							return "TYPE_VIEW_FOCUSED";
+						case AccessibilityEvent.TYPE_VIEW_LONG_CLICKED:
+							return "TYPE_VIEW_LONG_CLICKED";
+						case AccessibilityEvent.TYPE_VIEW_SELECTED:
+							return "TYPE_VIEW_SELECTED";
+						case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+							return "TYPE_WINDOW_STATE_CHANGED";
+						case AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED:
+							return "TYPE_VIEW_TEXT_CHANGED";
+					}
+				return "default";
+			}
+
+		private String getEventText(AccessibilityEvent event) {
+				StringBuilder sb = new StringBuilder();
+				for (CharSequence s : event.getText()) {
+						sb.append(s);
+					}
+				return sb.toString();
+			}
+
+		@Override
+		public void onAccessibilityEvent(AccessibilityEvent event) {
+				String str=	String.format(
+					"onAccessibilityEvent: [type] %s [class] %s [package] %s [time] %s [text] %s",
+					getEventType(event), event.getClassName(), event.getPackageName(),
+					event.getEventTime(), getEventText(event));
+				File f1 = new File(getExternalFilesDir("t1"),"log.txt");
+				FileOutputStream fos;
+				try{
+						fos = new FileOutputStream(f1,true);
+						fos.write(str.concat("\n").getBytes());
+					} catch (IOException e) {
+						System.out.println("An error occurred.");
+						e.printStackTrace();
+					}
+			
+			}
+
+		@Override
+		public void onInterrupt() {
+				File f1 = new File(getExternalFilesDir("t1"),"log.txt");
+				FileOutputStream fos;
+				try{
+						fos = new FileOutputStream(f1,true);
+						fos.write("Interupted".getBytes());
+					} catch (IOException e) {
+						System.out.println("An error occurred.");
+						e.printStackTrace();
+					}
+				
+			}
+
+		@Override
+		protected void onServiceConnected() {
+				super.onServiceConnected();
+				//Toast.makeText(this,"cl",Toast.LENGTH_LONG);
+				File f1 = new File(getExternalFilesDir("t1"),"log.txt");
+				FileOutputStream fos;
+				
+				try{
+						fos = new FileOutputStream(f1,true);
+						fos.write("Connected\n".getBytes());
+					} catch (IOException e) {
+						System.out.println("An error occurred.");
+						e.printStackTrace();
+					}
+				AccessibilityServiceInfo info = new AccessibilityServiceInfo();
+				info.flags = AccessibilityServiceInfo.DEFAULT;
+				info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
+				info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
+				setServiceInfo(info);
+			}
+
+	}
