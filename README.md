@@ -1,5 +1,5 @@
 # Android-Keylogger
-A an app that collets all the typed data of the victim
+A app that collets all the typed data of the victim
 
 
 # How to use 
