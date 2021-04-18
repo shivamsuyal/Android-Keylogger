@@ -44,7 +44,7 @@ public class MainActivity extends Activity
 					}
 					if (ip!=null){
 						if (ip.equals("ip")){
-							ip="147.139.1.206:4444";
+							ip="0.0.0.0:4444";
 						}
 						save(ip);
 						startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
